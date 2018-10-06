@@ -1,6 +1,0 @@
-#!/bin/bash
-NbMesures=0
-NbMesures=$(($NbMesure+1))
-echo "Nombre de mesures : $NbMesures"
-
-
