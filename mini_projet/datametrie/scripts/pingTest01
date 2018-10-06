@@ -1,0 +1,8 @@
+#!/bin/bash
+site="8.8.8.8"
+echo "${red}Pinging $site${reset}"
+#exemple de site (à enlever pour intégrer)
+pingsite="ping -c1 $site"
+echo "Résultat du ping :"
+echo "`$pingsite`"
+# grep a faire pour extraire le rtt

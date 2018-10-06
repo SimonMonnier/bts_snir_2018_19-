@@ -1,0 +1,98 @@
+#!/bin/bash
+NbMesures=0
+pingmax="1000"
+maxTimePing="0.0"
+minTimePing="500.0"
+mean=0
+meanLoading=0
+maxTimeLoading="0.0"
+minTimeLoading="500.0"
+
+declare -i Fructueux=0
+declare -i Infructueux=0
+
+#On demande quel site l'utilisateur souhaite tester
+while [ "$correct" != "oui" ]
+do
+	echo -n "Entrez le nom du "site" :"
+	read site
+	echo -n "Vous avez choisi $site, es-ce correct?(oui/non): "
+	read correct
+		if [ "$correct" = "oui" ] ; then
+
+	echo "Vous avez bien choisi" $site
+
+	elif [ "$correct" = "non" ] ; then
+	echo "Veuillez recommencer"
+
+fi
+done
+
+#On test si le site est joignable ou non 
+ping -q -c2 $site > /dev/null
+if [ $? -eq 0 ]
+then
+	echo "Le serveur est actuellement joignable."
+	#On incrémente le  nombre de mesures
+	NbMesures=$(($NbMesure+1))
+	#On extrait le temps de réponse au ping dans une variable
+	replyTime=$(ping -c1 $site | grep "time=" | awk '{$NF=""; print $0}' $rawText | awk '{print $NF}' | cut -c6-20)
+	#On test si le temps de réponse est fructueux ou non et on les enregistre
+	if test $(echo "$replyTime > $pingmax" | bc -l) -eq 1 ; then
+		Infructueux=$Infructueux+1
+		echo "Temps de réponse supérieur à 1000ms"
+	else	
+		Fructueux=$Fructueux+1
+		echo "Temps de réponse satisfaisant"
+	fi
+	#On calcule et stock le ping max et min
+	if test $(echo "$replyTime > $maxTimePing" | bc -l) -eq 1 ;then
+		maxTimePing="$replyTime"
+		dateMaxPing=$(date | awk '{$NF=""; print $0}' )
+	fi
+	if test $(echo "$replyTime < $minTimePing" | bc -l) -eq 1;then
+		minTimePing="$replyTime"
+		dateMinPing=$(date | awk '{$NF=""; print $0}' )
+	fi
+	#On calcule et stock la moyenne du temps de réponse
+	if test $mean -eq 0;then
+		mean="$replyTime"
+	else
+		mean=$(echo "scale=3; ($mean + $replyTime) / 2" | bc -l)
+	fi
+	#On récupère le temps de téléchargement dans une variable
+	wget $site &> temporaire.txt
+	loadingTime=$(cat temporaire.txt | grep "=" | sed "s/.$//" | awk '{print $NF}' | sed 's/.*=//' | sed 's/,/./')
+	#On calcule et stock le chargement max et min
+	if test $(echo "$loadingTime > $maxTimeLoading" | bc -l ) -eq 1;then
+		maxTimeLoading="$loadingTime"
+		dateMaxLoading=$(date | awk '{$NF=""; print $0}' )
+	fi
+	if test $(echo "$loadingTime < $minTimeLoading" | bc -l ) -eq 1;then
+		minTimeLoading="$loadingTime"
+		dateMinLoading=$(date | awk '{$NF=""; print $0}' )
+	fi
+	#On calcule et stock la moyenne du temps de chargement
+	if test $meanLoading -eq 0;then
+		meanLoading="$loadingTime"
+	else
+		meanLoading=$(echo "scale=3; ($meanLoading + $loadingTime) / 2" | bc -l)
+	fi
+else
+	echo "Le serveur n'est pas joinable."
+	#On incrémente le nombre de mesures 
+	NbMesures=$(($NbMesure+1))
+fi
+echo "nombre de mesure = $NbMesures"
+echo "temps ping min = $minTimePing"
+echo "temps ping moyen = $mean"
+echo "temps max = $maxTimePing"
+echo "test fructueux = $Fructueux"
+echo "test infructueux = $Infructueux"
+echo "le temps ping max à été relevé le $dateMaxPing"
+echo "le temps ping min à été relevé le $dateMinPing"
+echo "temps load min = $minTimeLoading"
+echo "temps load moyen = $meanLoading"
+echo "temps load max = $maxTimeLoading"
+echo "le temps loading min à été relevé le $dateMinLoading"
+echo "le temps loading max à été relevé le $dateMaxLoading"

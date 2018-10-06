@@ -1,0 +1,10 @@
+#!/bin/bash
+
+ping -q -c2 $1 > /dev/null
+
+if [ $? -eq 0 ]
+then
+	echo "Le serveur est actuellement joignable."
+else
+	echo "Le serveur n'est pas joinable."
+fi

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#Programme de comparaison entre deux réels, rangeant les résult dans des min et max
+declare -i i
+i=0
+while [ $i -lt 11 ]
+do
+	replyTime=$(ping -c1 $1 | grep "time=" | awk '{$NF=""; print $0}' $rawText | awk '{print $NF}' | cut -c6-20)
+	echo "$replyTime"
+	if test $i -lt 1;then
+		mean="$replyTime"
+	else
+		mean=$(echo "scale=3; ($mean + $replyTime) / 2" | bc -l) 
+	fi
+	i=$i+1
+	echo "moyenne = $mean"
+done

@@ -1,0 +1,4 @@
+#!/bin/bash
+#Ce programme a pour but d"afficher la date d'un ping 
+Date=$(date | awk '{$NF=""; print $0}' )
+echo $Date

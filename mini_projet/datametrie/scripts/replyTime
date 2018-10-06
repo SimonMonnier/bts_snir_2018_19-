@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#Programme pour récupérer le temps de réponse au ping dans une variable
+
+replyTime=$(ping -c1 $1 | grep "time=" | awk '{$NF=""; print $0}' $rawText | awk '{print $NF}' | cut -c6-20)
+echo "$replyTime"

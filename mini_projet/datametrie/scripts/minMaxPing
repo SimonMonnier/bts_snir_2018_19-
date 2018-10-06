@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#Programme de comparaison entre deux réels, rangeant les résult dans des min et max
+
+replyTime=$(ping -c1 $1 | grep "time=" | awk '{$NF=""; print $0}' $rawText | awk '{print $NF}' | cut -c6-20)
+echo "$replyTime"
+maxTimePing="0.0"
+minTimePing="500.0"
+if test $(echo "$replyTime > $maxTimePing" | bc -l) -eq 1 ;then
+	maxTimePing="$replyTime"
+fi
+if test $(echo "$replyTime < $minTimePing" | bc -l) -eq 1;then
+	minTimePing="$replyTime"
+fi

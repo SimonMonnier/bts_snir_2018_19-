@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#Programme pour récupérer le temps de réponse au ping dans une variable
+wget $1 &> teste.txt
+loadingTime=$(cat teste.txt | grep "=" | sed "s/.$//" | awk '{print $NF}' | sed 's/.*=//')
+echo "$loadingTime"
