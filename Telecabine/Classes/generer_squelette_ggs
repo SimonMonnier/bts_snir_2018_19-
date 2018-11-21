@@ -1,0 +1,439 @@
+#! /bin/sh
+# Script de generation de Classe et ClasseTest respectant le style c++ Google
+# http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
+
+if [ $# -ne 1 ]; then
+ { echo "Syntaxe : $0 nom de la classe (premiere lettre en MAJUSCULE) "
+   echo ""
+ } >&2
+ exit 1
+fi
+
+nomClasse=$1
+nomClasseMaj=$(echo $nomClasse | tr a-z A-Z)
+nomClasseMin=$(echo $nomClasse | tr A-Z a-z)
+nomClasseTest=${nomClasse}Test
+nomClasseTestMaj=$(echo $nomClasseTest | tr a-z A-Z)
+nomClasseTestMin=$(echo $nomClasseTest | tr A-Z a-z)
+repertoireFichierSource=
+nomFichierEntete=${nomClasse}.h
+nomFichierImplementation=${nomClasse}.cpp
+nomFichierTestImplementation=${nomClasse}Test.cpp
+nomFichierTestEntete=${nomClasse}Test.h
+fichierEntete=${repertoireFichierSource}${nomFichierEntete}
+fichierImplementation=${repertoireFichierSource}${nomFichierImplementation}
+fichierTestEntete=${repertoireFichierSource}${nomFichierTestEntete}
+fichierTestImplementation=${repertoireFichierSource}${nomFichierTestImplementation}
+#fichierMakefile=${repertoireFichierSource}Makefile
+#Saisie des informations de l'entete
+echo "Entrez une description sommaire de la classe"
+read description;
+
+auteur=$LOGNAME
+dateCreation=$(date +%d" "%b" "%Y" "%X)
+anneeCreation=$(date +%Y)
+compilateur=$(gcc --version | grep gcc)
+reponse="O"
+
+if [ -e $fichierEntete ] ; then
+	echo "Le fichier d'entete $fichierEntete existe. Voulez-vous l'ecraser ? (O/N)"
+	read reponse;
+fi
+
+if  [ $reponse = "O" ] || [ $reponse = "o" ]; then
+
+echo "Creation de $fichierEntete"
+touch $fichierEntete
+
+echo "/**
+ *  Copyright (C) $anneeCreation  $auteur  ($auteur@appert44.org)
+ *  @file         $nomFichierEntete
+ *  @brief        $description
+ *  @version      0.1
+ *  @date         $dateCreation
+ *
+ *  @note         Voir la description detaillee explicite dans le fichier
+ *                $nomFichierImplementation
+ *                C++ Google Style :
+ *                http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
+ */
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+#ifndef _${nomClasseMaj}_H
+#define _${nomClasseMaj}_H
+
+// Includes system C
+//#include <stdint.h>  // definition des types int8_t, int16_t ...
+
+// Includes system C++
+
+// Includes qt
+
+// Includes application
+
+// Constantes
+// ex :
+// const int kDaysInAWeek = 7;
+
+// Enumerations
+// ex :
+// enum Couleur
+// {
+//     kBlue = 0,
+//     kWhite,
+//     kRed,
+// };
+
+// Structures
+// ex:
+// struct UrlTableProperties
+// {
+//  string name;
+//  int numEntries;
+// }
+
+// Declarations de classe avancees
+// ex:
+// class MaClasse;
+
+/** @brief $description
+ *  Description detaillee de la classe.
+ */
+class $nomClasse
+{
+public :
+    /**
+     * Constructeur
+     */
+    ${nomClasse}();
+    /**
+     * Destructeur
+     */
+    ~${nomClasse}();
+
+    // Methodes publiques de la classe
+    // ex : ReturnType NomMethode(Type);
+
+    // Pour les associations :
+    // Methodes publiques setter/getter (mutateurs/accesseurs) des attributs prives
+    // ex :
+    // void setNomAttribut(Type nomAttribut) { nomAttribut_ = nomAttribut; }
+    // Type getNomAttribut(void) const { return nomAttribut_; }
+
+protected :
+    // Attributs proteges
+
+    // Methode protegees
+
+private :
+    // Attributs prives
+    // ex :
+    // Type nomAttribut_;
+
+    // Methodes privees
+};
+
+// Methodes publiques inline
+// ex :
+// inline void $nomClasse::maMethodeInline(Type valeur)
+// {
+//   
+// }
+// inline Type $nomClasse::monAutreMethode_inline_(void)
+// {
+//   return 0;
+// }
+
+#endif  // _${nomClasseMaj}_H
+" > $fichierEntete;
+fi
+
+if [ -e $fichierImplementation ] ; then
+	echo "Le fichier d'implementation $fichierImplementation existe. Voulez-vous l'ecraser ? (O/N)"
+	read reponse;
+fi
+
+if  [ $reponse = "O" ] || [ $reponse = "o" ]; then
+
+echo "Creation de $fichierImplementation"
+touch $fichierImplementation
+
+echo "/**
+ *  Copyright (C) $anneeCreation  $auteur  ($auteur@appert44.org)
+ *  @file         $nomFichierImplementation
+ *  @brief        $description
+ *  @version      0.1
+ *  @date         $dateCreation
+ *
+ *  Description detaillee du fichier $nomFichierImplementation
+ *  Fabrication   $compilateur 
+ *  @todo         Liste des choses restant a faire.
+ *  @bug          $dateCreation - Aucun pour l'instant
+ */
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
+// Includes system C
+
+// Includes system C++
+// A décommenter si besoin cout, cin, ...
+// #include <iostream>
+// using namespace std;
+
+// Includes qt
+
+// Includes application
+#include \"${nomFichierEntete}\"
+
+/**
+ * Constructeur
+ */
+${nomClasse}::${nomClasse}()
+{
+}
+
+/**
+ * Destructeur
+ */
+${nomClasse}::~${nomClasse}()
+{
+}
+
+// Methodes publiques
+// ex :
+/**
+ * Exemple de description d'une methode
+ *
+ * @param un_parametre  Description d'un parametre
+ * @return              Description du retour
+ */
+// ReturnType ${nomClasse}::NomMethode(Type parametre)
+// {
+// }
+
+// Methodes protegees
+
+// Methodes privees
+
+// Programme principal
+// Si c'est la classe principale du projet, on place une fonction main()
+// Dans ce cas, on peut supprimer les fichiers de tests unitaires
+// ex :
+// int main(int argc, char *argv[])
+// {
+//    // Construction de l'instance de la classe principale
+//    cout << \"Construction de l'instance de la classe principale $nomClasse\" << endl;
+//    $nomClasse *$nomClasseMin = new $nomClasse();
+//    // Lancement de l'activité principale
+//    return 0;
+// }
+" > $fichierImplementation;
+fi
+
+
+if [ -e $fichierTestEntete ] ; then
+	echo "Le fichier de test $fichierTestEntete existe. Voulez-vous l'ecraser ? (O/N)"
+	read reponse;
+fi
+
+if  [ $reponse = "O" ] || [ $reponse = "o" ]; then
+
+echo "Creation de $fichierTestEntete"
+touch $fichierTestEntete
+
+
+echo "
+/*
+ *  Copyright (C) $anneeCreation  $auteur  ($auteur@appert44.org)
+ *  @file         $nomFichierTestEntete
+ *  Classe        $nomClasse
+ *  @note         Classe en charge des tests unitaires
+ */
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+
+#ifndef _${nomClasseTestMaj}_H
+#define _${nomClasseTestMaj}_H
+
+// Includes system C
+
+// Includes system C++
+#include <cppunit/TestFixture.h>
+#include <cppunit/extensions/HelperMacros.h>
+
+// Includes qt
+
+// Includes application
+#include \"${nomFichierEntete}\"
+
+class $nomClasseTest : public CppUnit::TestFixture
+{
+    CPPUNIT_TEST_SUITE($nomClasseTest);
+    CPPUNIT_TEST(testConstructor);
+    CPPUNIT_TEST(testUnitaire1);
+    CPPUNIT_TEST_SUITE_END();
+
+public :
+    void setUp();
+    void tearDown();
+
+    void testConstructor();
+    void testUnitaire1();
+
+protected :
+    // Attributs proteges
+
+    // Methode protegees
+
+private :
+    // Attributs prives
+
+    // Methodes privees
+};
+
+#endif  // _${nomClasseTestMaj}_H
+
+" > $fichierTestEntete;
+fi
+
+
+if [ -e $fichierTestImplementation ] ; then
+	echo "Le fichier de test $fichierTestImplementation existe. Voulez-vous l'ecraser ? (O/N)"
+	read reponse;
+fi
+
+if  [ $reponse = "O" ] || [ $reponse = "o" ]; then
+
+echo "Creation de $fichierTestImplementation"
+touch $fichierTestImplementation
+
+
+echo "
+/*
+ *  Copyright (C) $anneeCreation  $auteur  ($auteur@appert44.org)
+ *  @file         $nomFichierTestImplementation
+ *  Classe        $nomClasse
+ *  @note         Implementation de la classe en charge des tests unitaires
+ */
+
+// Includes system C
+
+// Includes system C++
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/XmlOutputter.h>
+#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
+
+// Includes qt
+
+// Includes application
+#include \"${nomFichierTestEntete}\"
+
+// Registers the fixture into the 'registry'
+CPPUNIT_TEST_SUITE_REGISTRATION($nomClasseTest);
+
+// Exemple d'assertions possibles
+// # CPPUNIT_ASSERT(condition)
+// Assertions that a condition is true.
+// # CPPUNIT_ASSERT_MESSAGE(message, condition)
+// Assertion with a user specified message.
+// # CPPUNIT_FAIL(message)
+// Fails with the specified message
+// # CPPUNIT_ASSERT_EQUAL(expected, actual)
+// Asserts that two values are equals.
+// # CPPUNIT_ASSERT_EQUAL_MESSAGE(message, expected, actual)
+// Asserts that two values are equals, provides additional message on failure
+// # CPPUNIT_ASSERT_DOUBLES_EQUAL(expected, actual, delta)
+
+// setUp() to initialize the variables you will use for test
+void $nomClasseTest::setUp()
+{
+}
+
+// tearDown() to release any permanent resources you allocated in setUp()
+void $nomClasseTest::tearDown()
+{
+}
+
+// Suite des tests unitaires
+
+void $nomClasseTest::testConstructor()
+{
+    // Construction de l'instance de classe a tester
+    $nomClasse *${nomClasseMin} = new ${nomClasse}();
+    CPPUNIT_ASSERT(${nomClasseMin} != NULL);
+    delete ${nomClasseMin};
+}
+
+void $nomClasseTest::testUnitaire1()
+{
+    // Construction de l'instance de classe a tester
+    $nomClasse *${nomClasseMin} = new ${nomClasse}();
+    CPPUNIT_ASSERT(${nomClasseMin} != NULL);
+    // Test unitaire d'une methode publique de la classe
+    // Utilisation des macros CPPUNIT_ASSERT, CPPUNIT_ASSERT_EQUAL, etc.
+    delete ${nomClasseMin};
+}
+
+// the main method
+int main(int argc, char* argv[])
+{
+    // informs test-listener about testresults
+    CPPUNIT_NS::TestResult testresult;
+
+    // register listener for collecting the test-results
+    CPPUNIT_NS::TestResultCollector collectedresults;
+    testresult.addListener(&collectedresults);
+
+    // register listener for per-test progress output
+    CPPUNIT_NS::BriefTestProgressListener progress;
+    testresult.addListener(&progress);
+
+    // insert test-suite at test-runner by registry
+    CPPUNIT_NS::TestRunner testrunner;
+    testrunner.addTest(CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest());
+    testrunner.run(testresult);
+
+    // output results in compiler-format
+    CPPUNIT_NS::CompilerOutputter compileroutputter(&collectedresults, std::cerr);
+    compileroutputter.write();
+
+    // for hudson
+    std::ofstream file( \"${nomClasse}-cppunit-report.xml\" );
+    CPPUNIT_NS::XmlOutputter xmloutputter(&collectedresults, file);
+    xmloutputter.write();
+    file.close();
+
+    // return 0 if tests were successful
+    return collectedresults.wasSuccessful() ? 0 : 1;
+}
+" > $fichierTestImplementation;
+
+fi
+
+
+
