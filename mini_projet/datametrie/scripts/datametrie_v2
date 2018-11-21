@@ -1,0 +1,207 @@
+#!/bin/bash
+
+Qos=0
+mean=0
+mail="a"
+mail2="b"
+countDays=0
+meanLoading=0
+pingmax="1000"
+maxTimePing="0.0"
+minTimePing="500.0"
+maxTimeLoading="0.0"
+minTimeLoading="500.0"
+
+declare -i workDays=0
+declare -i notHtml=0
+declare -i tf_hours=0
+declare -i NbMesures=0
+declare -i Fructueux=0
+declare -i Infructueux=0
+declare -i injoignable=0
+
+clear
+#On veut demander l adresse mail et un nombre de jour d'utilisation du programme
+#La boucle while, impose une condition de sortie d'étape (demande du mail)
+while [ "$mail" != "$mail2" ] 
+do
+	echo -n "Entrez vôtre adresse "mail" : "
+	read mail
+	echo -n "Veuillez confirmer vôtre adresse "mail": "
+	read mail2
+
+	#On vérifie l état de la variable mail via la variable mail2(mail=mail2)
+	if [ "$mail" = "$mail2" ] ; then
+		clear
+		echo " Vous avez validé" $mail
+	elif [ "$mail" != "$mail2" ] ; then
+		clear
+		echo "Saisie non valide, veuillez recommencer :"
+fi
+done
+# Création d'un nom de fichier de vérouillage pour vérifier si le script est déjà lancé:
+LOCKFILE="/run/lock/$(basename $0)" ;
+# Si un fichier de lock existe ...
+[ -e ${LOCKFILE} ] && 
+{
+	#On vérifie si le processus est en cours :
+        [ -d /proc/$(cat ${LOCKFILE}) ] && 
+	{
+		#Si oui, fin de script :
+                echo "Le script est déjà lancé. Fin." ;
+                exit 0 ;
+        } || 
+	{
+		#Si non le fichier à été oublié. Il est supprimé : 
+                rm ${LOCKFILE} ;
+        }
+}
+# Création du fichier de lock :
+echo ${$} > ${LOCKFILE} ;
+#On demande quel site l utilisateur souhaite tester
+while [ "$correct" != "oui" ]
+do
+	echo -n "Entrez le nom ou l'adresse ip du "site" :"
+	read site
+	#On test si le nom est valide
+	ping  -c1 $site &> tempo.txt
+	reply1=$(cat tempo.txt | grep -o "inconnu")
+	rm tempo.txt
+	if [ "$reply1" = "inconnu" ] ; then
+		echo $site "Nom ou service inconnu"
+	else
+		clear
+		#L utilisateur vérifie son entrée
+		echo -n "Vous avez choisi $site, es-ce correct?(oui/non): "
+		read correct
+		clear
+		if [ "$correct" = "oui" ] ; then
+			echo "Vous avez validé " $site
+			#On vérifie si le site est joignable et propose de continuer
+			reply=$(ping  -c1 $site | grep -o "ttl")
+			if [ "$reply" = "ttl" ]; then
+				echo "Le serveur est actuellement joignable."
+			else
+				echo "Le serveur n'est actuellement pas joignable."
+				echo "Voulez vous continuer ?(oui/non)"
+				read correct
+				clear
+			fi
+		elif [ "$correct" = "non" ] ; then
+			clear
+			echo "Veuillez recommencer"
+		fi
+	fi
+done
+#On demande le nombre de jours de test
+while [ "$workDays" = "0" ]
+do
+	echo -n "Entrez le nombre de jours de test désiré :"
+	read workDays
+	if [ "$workDays" = "0" ] ; then
+		clear
+		echo  "Saisie invalide, veuillez recommencer"
+	fi
+done
+#Le test démarre
+clear
+echo "Test en cours, veuillez patienter..."
+while [ $countDays -lt $workDays ]
+do
+	while [ $tf_hours -lt 4 ]
+	do
+	#On test si le site est joignable ou non 
+		reply=$(ping  -c1 $site | grep -o "ttl")
+		if [ "$reply" = "ttl" ]
+		then
+			#On incrémente le  nombre de mesures
+			NbMesures=$NbMesures+1
+			#On extrait le temps de réponse au ping dans une variable
+			replyTime=$(ping -c1 $site | grep "time=" | awk '{$NF=""; print $0}' $rawText | awk '{print $NF}' | cut -c6-20)
+			#On test si le temps de réponse est fructueux ou non et on les enregistre
+			if test $(echo "$replyTime > $pingmax" | bc -l) -eq 1 ; then
+				Infructueux=$Infructueux+1
+			else	
+				Fructueux=$Fructueux+1
+			fi
+			#On calcule et stock le ping max et min
+			if test $(echo "$replyTime > $maxTimePing" | bc -l) -eq 1 ;then
+				maxTimePing="$replyTime"
+				dateMaxPing=$(date | awk '{$NF=""; print $0}' )
+			fi
+			if test $(echo "$replyTime < $minTimePing" | bc -l) -eq 1;then
+				minTimePing="$replyTime"
+				dateMinPing=$(date | awk '{$NF=""; print $0}' )
+			fi
+			#On calcule et stock la moyenne du temps de réponse
+			if test $(echo "$mean == 0" | bc -l) -eq 1;then
+				mean="$replyTime"
+			else
+				mean=$(echo "scale=3; ($mean + $replyTime) / 2" | bc -l)
+			fi
+			#On récupère le temps de téléchargement dans une variable, puis on éfface le fichier index
+			wget $site &> temporaire.txt
+			loadingTime=$(cat temporaire.txt | grep "=" | sed "s/.$//" | awk '{print $NF}' | sed 's/.*=//' | sed 's/,/./')
+			#On test si il y a un page html
+			if [ "$loadingTime" = "" ]; then
+				notHtml=1
+				rm temporaire.txt
+			else
+				rm index.html
+				rm temporaire.txt
+				#On calcule et stock le chargement max et min
+				if test $(echo "$loadingTime > $maxTimeLoading" | bc -l ) -eq 1;then
+					maxTimeLoading="$loadingTime"
+					dateMaxLoading=$(date | awk '{$NF=""; print $0}' )
+				fi
+				if test $(echo "$loadingTime < $minTimeLoading" | bc -l ) -eq 1;then
+					minTimeLoading="$loadingTime"
+					dateMinLoading=$(date | awk '{$NF=""; print $0}' )
+				fi
+				#On calcule et stock la moyenne du temps de chargement
+				if test $(echo "$meanLoading == 0" | bc -l) -eq 1;then
+					meanLoading="$loadingTime"
+				else
+					meanLoading=$(echo "scale=3; ($meanLoading + $loadingTime) / 2" | bc -l)
+				fi
+			fi
+			sleep 6s
+			tf_hours=$(($tf_hours+1))
+		else
+			#On incrémente le nombre de mesures et injoignable
+			NbMesures=$NbMesures+1
+			injoingnable=$injoignable+1
+			sleep 3s
+			tf_hours=$tf_hours+1
+		fi
+	done
+	#On réinitialise les heures et on incrémente countDays
+	tf_hours=0
+	countDays=$(($countDays+1))
+done
+#Calcul de la Qos
+Qos=$(echo "scale=2; ($Fructueux / $NbMesures) * 100" | bc -l)
+#On envoi le mail
+if [ $notHtml -eq 0 ]; then 
+	echo -e "Nom du site $site\n\nnombre de mesure = $NbMesures\n\n\
+temps ping min = $minTimePing\ntemps ping moyen = $mean\n\
+temps ping max = $maxTimePing\n\nle temps de ping max à été relevé le $dateMaxPing\n\
+le temps de ping min à été relevé le $dateMinPing\n\ntemps load min = $minTimeLoading\n\
+temps load moyen = $meanLoading\ntemps load max = $maxTimeLoading\n\n\
+le temps loading min à été relevé le $dateMinLoading\n\
+le temps loading max à été relevé le $dateMaxLoading\n\n\
+test fructueux = $Fructueux\ntest infructueux = $Infructueux\n\n\
+la Qos est de $Qos % \n\nSur $countDays jours l'hote à été injoignable $injoignable fois\n" | mail "Info-serveur" $mail2
+else
+	echo -e "Nom du site $site\n\nnombre de mesure = $NbMesures\n\n\
+temps ping min = $minTimePing\ntemps ping moyen = $mean\n\
+temps ping max = $maxTimePing\n\nle temps de ping max à été relevé le $dateMaxPing\n\
+le temps de ping min à été relevé le $dateMinPing\n\n\
+il n'y pas de page web sur ce site, donc pas de temps de chargement à tester\n\n\
+test fructueux = $Fructueux\ntest infructueux = $Infructueux\n\n\
+la Qos est de $Qos % \n\nSur $countDays jours l'hote à été injoignable $injoignable fois\n" | mail "Info-serveur" $mail2
+fi
+sleep 15 ;
+# Nettoyage du fichier de lock :
+[ -e ${LOCKFILE} ] && rm ${LOCKFILE} ;
+clear
