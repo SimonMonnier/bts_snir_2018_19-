@@ -107,7 +107,7 @@ public :
 
 	void ResetInitPrinter(void);
 
-	bool GetAck(void);
+	int GetAck(void);
 
 	void setAdresse_(unsigned long int new_var){adresse_ = new_var;}
 

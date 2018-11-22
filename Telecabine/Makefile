@@ -68,12 +68,16 @@ HDR = $(wildcard $(SRCDIR)/*.h)
 # Classes auxiliaires
 # ex                    = $(OBJDIR)/MyAuxClass.o
 AUX_OBJECTS		= $(OBJDIR)/PortParallele.o\
-			$(OBJDIR)/AlarmeSonore.o $(OBJDIR)/Afficheur.o
+			$(OBJDIR)/AlarmeSonore.o $(OBJDIR)/Afficheur.o\
+			$(OBJDIR)/Portillon.o $(OBJDIR)/PresenceCabine.o\
+			$(OBJDIR)/Tourniquet.o $(OBJDIR)/Gestionnaire.o
 
 # Classes de tests unitaires
 # ex                    = $(OBJDIR)/MyAuxClassTest.o 
 UNITTEST_OBJECTS	= $(OBJDIR)/PortParalleleTest.o\
-			$(OBJDIR)/AlarmeSonoreTest.o $(OBJDIR)/AfficheurTest.o
+			$(OBJDIR)/AlarmeSonoreTest.o $(OBJDIR)/AfficheurTest.o\
+			$(OBJDIR)/PortillonTest.o $(OBJDIR)/PresenceCabineTest.o\
+			$(OBJDIR)/TourniquetTest.o $(OBJDIR)/GestionnaireTest.o
 
 # Classe principale de release
 # ex                    = $(OBJDIR)/MyMainClass.o
@@ -85,7 +89,9 @@ OBJECTS		= 	$(AUX_OBJECTS) $(UNITTEST_OBJECTS) $(RELEASE_OBJECTS)
 # On place ici les exécutables à générer (testsunitaires et release)
 # ex            = 	$(UNITTESTBIN)/MyAuxClassTest
 UNITTEST	= $(UNITTESTBIN)/PortParalleleTest\
-		$(UNITTESTBIN)/AlarmeSonoreTest $(UNITTESTBIN)/AfficheurTest
+		$(UNITTESTBIN)/AlarmeSonoreTest $(UNITTESTBIN)/AfficheurTest\
+		$(UNITTESTBIN)/PortillonTest $(UNITTESTBIN)/PresenceCabineTest\
+		$(UNITTESTBIN)/TourniquetTest $(UNITTESTBIN)/GestionnaireTest
 
 # ex            = 	$(RELEASEBIN)/MyMainClass
 RELEASE		=	
@@ -134,6 +140,14 @@ $(UNITTESTBIN)/AlarmeSonoreTest : $(AUX_OBJECTS) $(OBJDIR)/AlarmeSonoreTest.o
 	$(CC) $^  $(LIBSTEST) -o $@
 $(UNITTESTBIN)/AfficheurTest : $(AUX_OBJECTS) $(OBJDIR)/AfficheurTest.o
 	$(CC) $^  $(LIBSTEST) -o $@
+$(UNITTESTBIN)/PortillonTest : $(AUX_OBJECTS) $(OBJDIR)/PortillonTest.o
+	$(CC) $^  $(LIBSTEST) -o $@
+$(UNITTESTBIN)/PresenceCabineTest : $(AUX_OBJECTS) $(OBJDIR)/PresenceCabineTest.o
+	$(CC) $^  $(LIBSTEST) -o $@
+$(UNITTESTBIN)/TourniquetTest : $(AUX_OBJECTS) $(OBJDIR)/TourniquetTest.o
+	$(CC) $^  $(LIBSTEST) -o $@
+$(UNITTESTBIN)/GestionnaireTest : $(AUX_OBJECTS) $(OBJDIR)/GestionnaireTest.o
+	$(CC) $^  $(LIBSTEST) -o $@
 # Production de la release
 $(RELEASEBIN)/MyMainClass : $(AUX_OBJECTS) $(OBJDIR)/MyMainClass.o
 	$(CC) $^ $(LIBS) -o $@
@@ -142,6 +156,14 @@ $(RELEASEBIN)/PortParallele : $(AUX_OBJECTS) $(OBJDIR)/PortParallele.o
 $(RELEASEBIN)/AlarmeSonore : $(AUX_OBJECTS) $(OBJDIR)/AlarmeSonore.o
 	$(CC) $^ $(LIBS) -o $@
 $(RELEASEBIN)/Afficheur : $(AUX_OBJECTS) $(OBJDIR)/Afficheur.o
+	$(CC) $^ $(LIBS) -o $@
+$(RELEASEBIN)/Portillon : $(AUX_OBJECTS) $(OBJDIR)/Portillon.o
+	$(CC) $^ $(LIBS) -o $@
+$(RELEASEBIN)/PresenceCabine : $(AUX_OBJECTS) $(OBJDIR)/PresenceCabine.o
+	$(CC) $^ $(LIBS) -o $@
+$(RELEASEBIN)/Tourniquet : $(AUX_OBJECTS) $(OBJDIR)/Tourniquet.o
+	$(CC) $^ $(LIBS) -o $@
+$(RELEASEBIN)/Gestionnaire : $(AUX_OBJECTS) $(OBJDIR)/Gestionnaire.o
 	$(CC) $^ $(LIBS) -o $@
 $(INSTALLDIR) :
 	mkdir -p $@

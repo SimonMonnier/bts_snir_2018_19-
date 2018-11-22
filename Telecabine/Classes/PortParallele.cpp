@@ -73,7 +73,7 @@ bool PortParallele::GetBusy(void)
 {
 	AccesIO();
 	int data = inb(adresse_ + kStatus); //lecture état du port
-	bool status = data & kMasqueStatusTourniquet;
+	int status = data & kMasqueStatusTourniquet;
 	return status;
 }
 
@@ -110,11 +110,11 @@ void PortParallele::ResetInitPrinter(void)
 	outb(data, adresse_ + kCommande); //écriture sur le port
 }
 
-bool PortParallele::GetAck(void)
+int PortParallele::GetAck(void)
 {
 	AccesIO();
 	int data = inb(adresse_ + kStatus); //lecture état du port
-	bool status = data & kMasqueCabine;
+	int status = data & kMasqueCabine;
 	return status;
 }
 

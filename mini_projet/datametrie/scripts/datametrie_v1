@@ -24,7 +24,7 @@ do
 fi
 done
 
-#On test si le site est joignable ou non 
+#On test si le site est joignable ou non
 ping -q -c2 $site > /dev/null
 if [ $? -eq 0 ]
 then
@@ -37,7 +37,7 @@ then
 	if test $(echo "$replyTime > $pingmax" | bc -l) -eq 1 ; then
 		Infructueux=$Infructueux+1
 		echo "Temps de réponse supérieur à 1000ms"
-	else	
+	else
 		Fructueux=$Fructueux+1
 		echo "Temps de réponse satisfaisant"
 	fi
