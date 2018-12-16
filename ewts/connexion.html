@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Acceuil EWTS-CO</title>
+  </head>
+  <body>
+    <div id="menu" >
+      <ul>
+        <li><a href="index.html">WRPI</a></li>
+        <li><a href="#">Système</a>
+          <ul>
+            <li><a href="#">Supervisor</a></li>
+            <li><a href="#">Réseau</a></li>
+            <li><a href="#">Processus</a></li>
+            <li><a href="#">Fichiers</a></li>
+            <li><a href="#">Ressources</a></li>
+            <li><a href="#">Périphériques</a></li>
+            <li><a href="date&heure.html">Date&heure</a></li>
+            <li><br><a href="#">Arrêt...</a></li>
+          </ul>
+        </li>
+        <li><a href="#">A Propos</a></li>
+        <li><a href="#">Contacts</a></li>
+        <li><a href="connexion.html">Connexion</a></li>
+      </ul>
+    </div>
+    <div id="connexion">
+      <form method="post" action="connexion.php">
+        <h1><br><br>Connexion</h1>
+          <p>
+            <img src="images/Pseudo.png" alt="Pseudo"><input type="text" name="pseudo" id="pseudo" placeholder="Pseudo" />
+          <p/>
+          <p>
+            <img src="images/MPass.png" alt="Mot de passe"><input type="text" name="mpass"id="mpass" placeholder="Mot de passe" />
+          </p>
+          <p><input type="submit" value="Confirmer"></p>
+      </form>
+    </div>
+  </body>
+</html>

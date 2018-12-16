@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Acceuil EWTS-CO</title>
+  </head>
+  <body>
+    <div id="menu" >
+      <ul>
+        <li><a href="index.html">WRPI</a></li>
+        <li><a href="#">Système</a>
+          <ul>
+            <li><a href="#">Supervisor</a></li>
+            <li><a href="#">Réseau</a></li>
+            <li><a href="#">Processus</a></li>
+            <li><a href="#">Fichiers</a></li>
+            <li><a href="#">Ressources</a></li>
+            <li><a href="#">Périphériques</a></li>
+            <li><a href="date&heure.html">Date&heure</a></li>
+            <li><br><a href="#">Arrêt...</a></li>
+          </ul>
+        </li>
+        <li><a href="#">A Propos</a></li>
+        <li><a href="#">Contacts</a></li>
+        <li><a href="connexion.html">Connexion</a></li>
+      </ul>
+    </div>
+    <div id="date">
+      <form method="post" action="dare&heure.php">
+        <h1><br><br>Date & heure</h1>
+        <p>Entrez la date :<br><input type="date" name="date" id="date"></p>
+        <p>Entrez l'heure : <br><input type="time" name="time" id="time"></p>
+        <p><input type="submit" value="Confirmer"></p>
+      </form>
+    </div>
+  </body>
+</html>

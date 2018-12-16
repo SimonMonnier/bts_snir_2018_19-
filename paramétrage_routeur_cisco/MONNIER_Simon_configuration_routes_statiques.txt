@@ -1,0 +1,191 @@
+#########################################################################
+#				Routeur 1				#
+#########################################################################
+
+R1#show running-config
+
+hostname R1
+!
+enable secret password
+!
+no ip domain-lookup
+!
+interface FastEthernet0/0
+ ip address 172.16.3.1 255.255.255.0
+ no shutdown
+ duplex auto
+ speed auto
+!
+interface Serial0/0/0
+ ip address 172.16.2.1 255.255.255.0
+ clock rate 64000
+ no shutdown
+!
+ip classless
+ip route 0.0.0.0 0.0.0.0 172.16.2.2 
+!
+line con 0
+ exec-timeout 0 0
+ password password
+ logging synchronous
+ login
+!
+line vty 0 1
+ exec-timeout 0 0
+ password password
+ logging synchronous
+ login
+!
+end
+
+
+R1#show ip route
+
+Gateway of last resort is 172.16.2.2 to network 0.0.0.0
+
+     172.16.0.0/24 is subnetted, 2 subnets
+C       172.16.2.0 is directly connected, Serial0/0/0
+C       172.16.3.0 is directly connected, FastEthernet0/0
+S*   0.0.0.0/0 [1/0] via 172.16.2.2
+
+
+R1#show ip interface brief
+
+Interface              IP-Address      OK? Method Status                Protocol 
+FastEthernet0/0        172.16.3.1      YES manual up                    up 
+FastEthernet0/1        unassigned      YES NVRAM  administratively down down 
+Serial0/0/0            172.16.2.1      YES manual up                    up 
+Serial0/0/1            unassigned      YES NVRAM  administratively down down 
+Vlan1                  unassigned      YES NVRAM  administratively down down
+
+
+
+
+#########################################################################
+#				Routeur 2				#
+#########################################################################
+
+R2#show running-config
+
+hostname R2
+!
+enable secret password
+!
+no ip domain-lookup
+!
+interface FastEthernet0/0
+ ip address 172.16.1.1 255.255.255.0
+ no shutdown
+ duplex auto
+ speed auto
+!
+interface Serial0/0/0
+ ip address 172.16.2.2 255.255.255.0
+ no shutdown
+!
+interface Serial0/0/1
+ ip address 192.168.1.2 255.255.255.0
+ no shutdown
+!
+ip classless
+ip route 192.168.2.0 255.255.255.0 192.168.1.1 
+ip route 172.16.3.0 255.255.255.0 Serial0/0/0 
+!
+line con 0
+ exec-timeout 0 0
+ password password
+ logging synchronous
+ login
+!
+line vty 0 1
+ exec-timeout 0 0
+ password password
+ logging synchronous
+ login
+!
+end
+
+
+R2#show ip route
+
+Gateway of last resort is not set
+
+     172.16.0.0/24 is subnetted, 3 subnets
+C       172.16.1.0 is directly connected, FastEthernet0/0
+C       172.16.2.0 is directly connected, Serial0/0/0
+S       172.16.3.0 is directly connected, Serial0/0/0
+C    192.168.1.0/24 is directly connected, Serial0/0/1
+S    192.168.2.0/24 [1/0] via 192.168.1.1
+
+
+R2#show ip interface brief
+
+Interface              IP-Address      OK? Method Status                Protocol 
+FastEthernet0/0        172.16.1.1      YES manual up                    up 
+FastEthernet0/1        unassigned      YES NVRAM  administratively down down 
+Serial0/0/0            172.16.2.2      YES manual up                    up 
+Serial0/0/1            192.168.1.2     YES manual up                    up 
+Vlan1                  unassigned      YES NVRAM  administratively down down
+
+
+
+
+#########################################################################
+#				Routeur 3				#
+#########################################################################
+
+R3#show running-config
+
+hostname R3
+!
+enable secret password
+!
+no ip domain-lookup
+!
+interface FastEthernet0/0
+ ip address 192.168.2.1 255.255.255.0
+ no shutdown
+ duplex auto
+ speed auto
+!
+interface Serial0/0/1
+ ip address 192.168.1.1 255.255.255.0
+ clock rate 64000
+ no shutdown
+!
+ip classless
+ip route 172.16.0.0 255.255.252.0 192.168.1.2 
+!
+line con 0
+ exec-timeout 0 0
+ password password
+ logging synchronous
+ login
+!
+line vty 0 1
+ exec-timeout 0 0
+ password password
+ logging synchronous
+ login
+!
+end
+
+
+R3#show ip route
+
+Gateway of last resort is not set
+
+     172.16.0.0/22 is subnetted, 1 subnets
+S       172.16.0.0 [1/0] via 192.168.1.2
+C    192.168.1.0/24 is directly connected, Serial0/0/1
+C    192.168.2.0/24 is directly connected, FastEthernet0/0
+
+
+R3#show ip interface brief
+
+Interface              IP-Address      OK? Method Status                Protocol 
+FastEthernet0/0        192.168.2.1     YES manual up                    up 
+FastEthernet0/1        unassigned      YES NVRAM  administratively down down 
+Serial0/0/0            unassigned      YES NVRAM  administratively down down 
+Serial0/0/1            192.168.1.1     YES manual up                    up 
+Vlan1                  unassigned      YES NVRAM  administratively down down
